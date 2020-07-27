@@ -1,7 +1,6 @@
 import React from 'react';
 import cssClasses from './Burger.module.css';
 
-
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 
 
