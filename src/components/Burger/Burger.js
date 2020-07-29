@@ -5,7 +5,7 @@ import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 
 
 
-//BURGER COMPONENT FUNCTION ===============
+//COMPONENT FUNCTION ===============
 const burger = (props) => {
     const ingredients = ingredientToComponent(props.ingredients);
 

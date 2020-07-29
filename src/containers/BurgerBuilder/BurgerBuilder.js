@@ -5,6 +5,8 @@ import Auxiliary from '../../hoc/Auxiliary';
 //Custom Component Imports
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
 
 const INGREDIENT_PRICES = {
@@ -25,8 +27,9 @@ class BurgerBuilder extends React.Component {
             cheese: 0,
             meat: 0,
         },
-        purchasable: false,
         totalPrice: 4,
+        purchasable: false,
+        purchasing: false,
     }
 
 
@@ -43,6 +46,9 @@ class BurgerBuilder extends React.Component {
 
         return (
             <Auxiliary>
+                <Modal show={this.state.purchasing}>
+                    <OrderSummary ingredients={this.state.ingredients} />
+                </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
                     ingredientAdded={this.addIngredientHandler}
@@ -50,6 +56,7 @@ class BurgerBuilder extends React.Component {
                     disabled={disableInfo}
                     purchasable={this.state.purchasable}
                     price={this.state.totalPrice}
+                    ordered={this.purchaseHandler}
                 />
             </Auxiliary>
         );
@@ -127,5 +134,11 @@ class BurgerBuilder extends React.Component {
         });
         //Update the Purchasability of the current burger
         this.updatePurchasableState(updatedIngredientState);
+    }
+
+    /*  Purchasing Method: ===============
+            Will update the 'purchasing' state value and show the OrderSummary modal                    */
+    purchaseHandler = () => {
+        this.setState({purchasing: true});
     }
 } export default BurgerBuilder;
