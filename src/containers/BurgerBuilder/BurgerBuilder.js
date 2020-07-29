@@ -8,7 +8,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
-
+//Ingredient Price Constants
 const INGREDIENT_PRICES = {
     salad: 0.5,
     cheese: 0.4,
@@ -17,9 +17,11 @@ const INGREDIENT_PRICES = {
 }
 
 
-//BurgerBuilder Component Class =========================
+
+//Component Class =========================
 class BurgerBuilder extends React.Component {
-    //Burger State =====
+    
+    //Component State =====
     state = {
         ingredients: {
             salad: 0,
@@ -31,8 +33,6 @@ class BurgerBuilder extends React.Component {
         purchasable: false,
         purchasing: false,
     }
-
-
 
     //Render JSX ===============
     render() {
@@ -46,7 +46,10 @@ class BurgerBuilder extends React.Component {
 
         return (
             <Auxiliary>
-                <Modal show={this.state.purchasing}>
+                <Modal
+                    show={this.state.purchasing}
+                    modalClosed={this.purchaseCancelHandler}
+                >
                     <OrderSummary ingredients={this.state.ingredients} />
                 </Modal>
                 <Burger ingredients={this.state.ingredients} />
@@ -139,6 +142,12 @@ class BurgerBuilder extends React.Component {
     /*  Purchasing Method: ===============
             Will update the 'purchasing' state value and show the OrderSummary modal                    */
     purchaseHandler = () => {
-        this.setState({purchasing: true});
+        this.setState({ purchasing: true });
+    }
+
+    /*  Cancel the Purchase Order: ===============
+            Will update the 'purchasing' state value and show the OrderSummary modal                    */
+    purchaseCancelHandler = () => {
+        this.setState({ purchasing: false });
     }
 } export default BurgerBuilder;

@@ -1,6 +1,7 @@
+//React Imports
 import React from 'react';
 import cssClasses from './Burger.module.css';
-
+//Custom Component Imports
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 
 
