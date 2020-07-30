@@ -1,5 +1,8 @@
+//Standard Imports
 import React from 'react';
 import Auxiliary from '../../../hoc/Auxiliary';
+//Custom Component Imports
+import Button from '../../UI/Button/Button';
 
 
 //Component Function =========================
@@ -20,7 +23,10 @@ const orderSummary = (props) => {
             <ul>
                 {ingredientSummary}
             </ul>
+            <p><strong>Total Price: ${props.totalPrice.toFixed(2)}</strong></p>
             <p>Continue to Checkout?</p>
+            <Button buttonType="Danger" clicked={props.purchaseCanceled}>CANCEL</Button>
+            <Button buttonType="Success" clicked={props.purchaseContinued}>CONTINUE</Button>
         </Auxiliary>
     );
 }; export default orderSummary;

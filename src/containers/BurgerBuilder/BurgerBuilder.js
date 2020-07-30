@@ -20,7 +20,7 @@ const INGREDIENT_PRICES = {
 
 //Component Class =========================
 class BurgerBuilder extends React.Component {
-    
+
     //Component State =====
     state = {
         ingredients: {
@@ -50,7 +50,12 @@ class BurgerBuilder extends React.Component {
                     show={this.state.purchasing}
                     modalClosed={this.purchaseCancelHandler}
                 >
-                    <OrderSummary ingredients={this.state.ingredients} />
+                    <OrderSummary
+                        ingredients= {this.state.ingredients}
+                        totalPrice={this.state.totalPrice}
+                        purchaseCanceled={this.purchaseCancelHandler}
+                        purchaseContinued={this.purchaseContinuedHandler}
+                    />
                 </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
@@ -149,5 +154,11 @@ class BurgerBuilder extends React.Component {
             Will update the 'purchasing' state value and show the OrderSummary modal                    */
     purchaseCancelHandler = () => {
         this.setState({ purchasing: false });
+    }
+
+    /*  Continue with the Purchase Order: ===============
+            Will handle the continue ordering request                                                   */
+    purchaseContinuedHandler = () => {
+        alert('You continue');
     }
 } export default BurgerBuilder;
