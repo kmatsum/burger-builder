@@ -72,7 +72,7 @@ class BurgerBuilder extends React.Component {
 
 
 
-    //FUNCTIONS ==================================================
+    //FUNCTIONS =========================
 
     /*  Update the Purchasable State: ===============
             Will analyze the 'ingredients' Object retrieved from arguments to determine if the built burger
