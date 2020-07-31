@@ -1,7 +1,7 @@
 //React Imports
 import React from 'react';
 //Layout Imports
-import Layout from './components/Layout/Layout';
+import Layout from './containers/Layout/Layout';
 //Container Imports
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 

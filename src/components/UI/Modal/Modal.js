@@ -8,25 +8,34 @@ import Backdrop from '../Backdrop/Backdrop';
 
 
 
-//Component Function =========================
-const modal = (props) => {
+//Component Class =========================
+class Modal extends React.Component {
 
-    //Return JSX Code ==========
-    return (
-        <Auxiliary>
-            <Backdrop
-                show={props.show}
-                clicked={props.modalClosed}
-            />
-            <div
-                className={cssClasses.Modal}
-                style={{
-                    transform: props.show ? 'translateY(0)' : 'translateY(-100vh)',
-                    opacity: props.show ? '1' : '0',
-                }}
-            >
-                {props.children}
-            </div>
-        </Auxiliary>
-    );
-}; export default modal;
+    //Should Component Update ===============
+    shouldComponentUpdate(nextProps, nextState) {
+        //Check if the 'show' props has been changed to determine if the Component needs to Update
+        return nextProps.show !== this.props.show;
+    }
+
+    //Render Method ===============
+    render() {
+        //Return JSX Code ==========
+        return (
+            <Auxiliary>
+                <Backdrop
+                    show={this.props.show}
+                    clicked={this.props.modalClosed}
+                />
+                <div
+                    className={cssClasses.Modal}
+                    style={{
+                        transform: this.props.show ? 'translateY(0)' : 'translateY(-100vh)',
+                        opacity: this.props.show ? '1' : '0',
+                    }}
+                >
+                    {this.props.children}
+                </div>
+            </Auxiliary>
+        );
+    }
+} export default Modal;

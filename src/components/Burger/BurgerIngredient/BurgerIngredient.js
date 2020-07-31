@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 //CSS Imports
 import cssClasses from './BurgerIngredient.module.css';
 
+
+//Component Class =========================
 class BurgerIngredient extends React.Component {
 
     render() { //Render JSX Code ===============

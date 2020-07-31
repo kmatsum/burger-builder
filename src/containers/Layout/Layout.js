@@ -4,14 +4,14 @@ import cssClasses from './Layout.module.css';
 //Higher Order Component Import
 import Auxiliary from '../../hoc/Auxiliary';
 //Custom Component Imports
-import Toolbar from '../Navigation/Toolbar/Toolbar';
-import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
+import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
+import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 
 //Component Class =========================
 class Layout extends React.Component {
     //Instantiate State
     state = {
-        showSideDrawer: true,
+        showSideDrawer: false,
     }
     
     //Render Method ===============
