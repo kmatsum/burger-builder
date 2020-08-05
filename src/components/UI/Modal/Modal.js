@@ -14,7 +14,7 @@ class Modal extends React.Component {
     //Should Component Update ===============
     shouldComponentUpdate(nextProps, nextState) {
         //Check if the 'show' props has been changed to determine if the Component needs to Update
-        return nextProps.show !== this.props.show;
+        return (nextProps.show !== this.props.show) || (nextProps.children !== this.props.children);
     }
 
     //Render Method ===============
