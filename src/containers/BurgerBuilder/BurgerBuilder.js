@@ -11,6 +11,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import burger from '../../components/Burger/Burger';
 
 //Ingredient Price Constants
 const INGREDIENT_PRICES = {
@@ -27,16 +28,23 @@ class BurgerBuilder extends React.Component {
 
     //Component State ----------
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0,
-        },
+        ingredients: null,
         totalPrice: 4,
         purchasable: false,
         purchasing: false,
         loading: false,
+        error: false,
+    }
+
+    componentDidMount() {
+        axiosOrder.get('/ingredients.json')
+            .then((response) => {
+                this.setState({ ingredients: response.data });
+            })
+            .catch((error) => {
+                this.setState({ error: true });
+                console.log(error);
+            });
     }
 
     //Render JSX ----------
@@ -49,13 +57,36 @@ class BurgerBuilder extends React.Component {
             disableInfo[key] = disableInfo[key] <= 0;
         }
 
-        //Determine if the loading spinner needs to be displayed anywhere
-        let orderSummary = <OrderSummary
-            ingredients={this.state.ingredients}
-            totalPrice={this.state.totalPrice}
-            purchaseCanceled={this.purchaseCancelHandler}
-            purchaseContinued={this.purchaseContinuedHandler}
-        />;
+        //Component Variables
+        let burgerBuilder = this.state.error ? <p style={{ textAlign: 'center' }}>Ingredients cant be loaded!</p> : <Spinner />
+        let orderSummary = null;
+
+        //Check if Ingredients are loaded from the Backend Server, load Components
+        if (this.state.ingredients) {
+            burgerBuilder = (
+                <Auxiliary>
+                    <Burger ingredients={this.state.ingredients} />
+                    <BuildControls
+                        ingredientAdded={this.addIngredientHandler}
+                        ingredientRemoved={this.removeIngredientHandler}
+                        disabled={disableInfo}
+                        purchasable={this.state.purchasable}
+                        price={this.state.totalPrice}
+                        ordered={this.purchaseHandler}
+                    />
+                </Auxiliary>
+            );
+
+            orderSummary = <OrderSummary
+                ingredients={this.state.ingredients}
+                totalPrice={this.state.totalPrice}
+                purchaseCanceled={this.purchaseCancelHandler}
+                purchaseContinued={this.purchaseContinuedHandler}
+            />;
+
+        }
+
+        //Determine if the loading <Spinner/> needs to be displayed insted of <OrderSummary/>
         if (this.state.loading) {
             orderSummary = <Spinner />;
         }
@@ -69,15 +100,7 @@ class BurgerBuilder extends React.Component {
                 >
                     {orderSummary}
                 </Modal>
-                <Burger ingredients={this.state.ingredients} />
-                <BuildControls
-                    ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler}
-                    disabled={disableInfo}
-                    purchasable={this.state.purchasable}
-                    price={this.state.totalPrice}
-                    ordered={this.purchaseHandler}
-                />
+                {burgerBuilder}
             </Auxiliary>
         );
     }
