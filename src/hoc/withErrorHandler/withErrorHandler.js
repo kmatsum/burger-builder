@@ -14,16 +14,18 @@ const withErrorHandler = (WrappedComponent, axios) => {
                 error: null,
             }
 
-            /*  When the Component is successfully mounted, create Axios Interceptors on the Axios instance
-            *   that is targetted by the HoC in order to create Request and Response interceptors.
-            *   These interceptors will check for any erros from the HTTP Requests and update the Error Modal
-            *   accordingly with the information presented */
-            componentDidMount() {
-                axios.interceptors.request.use((request) => {
-                    this.setState({ error: null });
-                    return (request);
-                })
-                axios.interceptors.response.use(
+            /*  When the Component is instantiated, create Axios Interceptors on the Axios instance
+             *  that is targetted by the HoC in order to create Request and Response interceptors.
+             *  These interceptors will check for any erros from the HTTP Requests and update the Error Modal
+             *  accordingly with the information presented */
+            componentWillMount() {
+                this.requestInterceptor = axios.interceptors.request.use(
+                    (request) => {
+                        this.setState({ error: null });
+                        return (request);
+                    }
+                );
+                this.responseInterceptor = axios.interceptors.response.use(
                     (response) => response,
                     (error) => {
                         this.setState({ error: error });
@@ -45,6 +47,14 @@ const withErrorHandler = (WrappedComponent, axios) => {
                         <WrappedComponent {...this.props} />
                     </Auxiliary>
                 );
+            }
+            
+
+            /*  When the withErrorHandler Component is no longer needed, the Axios Interceptors are ejected
+             *  to reduce memory leaks that may happen. */
+            componentWillUnmount() {
+                axios.interceptors.request.eject(this.requestInterceptor);
+                axios.interceptors.response.eject(this.responseInterceptor);
             }
 
 
