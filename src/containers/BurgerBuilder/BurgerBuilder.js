@@ -37,6 +37,7 @@ class BurgerBuilder extends React.Component {
     }
 
     componentDidMount() {
+        //HTTP Requests to get the default ingredients
         axiosOrder.get('/ingredients.json')
             .then((response) => {
                 this.setState({ ingredients: response.data });
