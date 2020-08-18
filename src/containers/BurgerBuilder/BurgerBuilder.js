@@ -11,7 +11,6 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
-import burger from '../../components/Burger/Burger';
 
 //Ingredient Price Constants
 const INGREDIENT_PRICES = {
@@ -201,37 +200,16 @@ class BurgerBuilder extends React.Component {
     *       Will handle the continue ordering request
     */
     purchaseContinuedHandler = () => {
-        //Set 'Loading' state to true, enablind Loading Spinners
-        this.setState({ loading: true })
-
-        //Compile the current burger to Send
-        const sendThisBurger = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice.toFixed(2),
-            customer: {
-                name: 'Kaz',
-                address: {
-                    street: 'Teststreet 1',
-                    zipCode: '12345',
-                    country: 'Earth',
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'Prime'
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]));
         }
+        queryParams.push("price=" + this.state.totalPrice);
+        const queryString = queryParams.join("&");
 
-        //HTTP POST Request based on the Axios-Order Instance
-        axiosOrder.post('/orders.json', sendThisBurger)
-            .then((response) => {
-                console.log(response);
-                alert('Burger Ordered');
-                //Disable Loading Spinner
-                this.setState({ loading: false, purchasing: false });
-            })
-            .catch((error) => {
-                console.log(error);
-                //Disable Loading Spinner
-                this.setState({ loading: false, purchasing: false });
-            });
+        this.props.history.push({
+            pathname: "/checkout",
+            search: "?" + queryString,
+        });
     }
 } export default withErrorHandler(BurgerBuilder, axiosOrder);

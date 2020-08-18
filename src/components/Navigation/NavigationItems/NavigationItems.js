@@ -6,12 +6,12 @@ import NavigationItem from './NavigationItem/NavigationItem';
 
 //Component Imports =========================
 const navigationItems = (props) => {
-    
-    //Return JSX ===============
+
+    //Return JSX ----------
     return (
         <ul className={cssClasses.NavigationItems}>
-            <NavigationItem link="/" active>Burger Builder</NavigationItem>
-            <NavigationItem link="/">Checkout</NavigationItem>
+            <NavigationItem exact link="/">Burger Builder</NavigationItem>
+            <NavigationItem link="/orders">My Orders</NavigationItem>
         </ul>
     );
 }; export default navigationItems;

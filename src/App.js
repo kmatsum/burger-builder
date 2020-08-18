@@ -1,20 +1,26 @@
 //React Imports
 import React from 'react';
+//React Router Imports
+import { Route, Switch } from 'react-router-dom';
 //Layout Imports
 import Layout from './containers/Layout/Layout';
 //Container Imports
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
+import Orders from './containers/Orders/Orders';
 
 //App Component Class =========================
 class App extends React.Component {
-  //Render JSX ===============
+  //Render JSX ----------
   render() {
     return (
       <div>
         <Layout>
-          <BurgerBuilder/>
-          <Checkout />
+          <Switch>
+            <Route path="/checkout" component={Checkout} />
+            <Route path="/orders" component={Orders} />
+            <Route exact path="/" component={BurgerBuilder} />
+          </Switch>
         </Layout>
       </div>
     );
