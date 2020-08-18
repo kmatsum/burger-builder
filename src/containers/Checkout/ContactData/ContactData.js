@@ -86,7 +86,7 @@ class ContactData extends React.Component {
 
         //Create a form variable for Loading Spinner purposes
         let form = (
-            <form>
+            <form onSubmit={this.orderHandler}>
                 {formElementsArray.map((formElement) => (
                     <Input
                         key={formElement.id}
@@ -96,7 +96,7 @@ class ContactData extends React.Component {
                         changed={(event) => { this.inputChangedHandler(event, formElement.id) }}
                     />
                 ))}
-                <Button clicked={this.orderHandler} buttonType="Success">ORDER</Button>
+                <Button buttonType="Success">ORDER</Button>
             </form>
         );
         //If the component is still loading, display a Spinner
@@ -124,21 +124,17 @@ class ContactData extends React.Component {
         //Prevents the default action for the event
         event.preventDefault();
         //Set 'Loading' state to true, enablind Loading Spinners
-        this.setState({ loading: true })
-        //Compile the current burger to Send
+        this.setState({ loading: true });
+        //Loop through all properties in 'this.state.orderForm' to create a new 'formData' object to send through HTTP Requests
+        const formData = {}
+        for (let formElementIdentifier in this.state.orderForm) {
+            formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+        }
+        //Compile the current order to Send
         const sendThisBurger = {
             ingredients: this.props.ingredients,
             price: this.props.totalPrice,
-            // customer: {
-            //     name: 'Kaz',
-            //     address: {
-            //         street: 'Teststreet 1',
-            //         zipCode: '12345',
-            //         country: 'Earth',
-            //     },
-            //     email: 'test@test.com'
-            // },
-            // deliveryMethod: 'Prime'
+            orderData: formData,
         }
         //HTTP POST Request based on the Axios-Order Instance
         axiosOrder.post('/orders.json', sendThisBurger)
@@ -158,8 +154,9 @@ class ContactData extends React.Component {
             });
     }
 
-    /*  Continue with the purchase: ---------------
-     *      Process and Place Order
+    /*  Form Input Changed Handler: ---------------
+     *      Handles the two-way binding of the form Inputs, updating the component state when
+     *      an Input component detects a change.
      */
     inputChangedHandler = (event, inputIdentifier) => {
         //Create a copy of the orderForm state
@@ -171,12 +168,10 @@ class ContactData extends React.Component {
         const updatedFormElement = {
             ...this.state.orderForm[inputIdentifier]
         };
-
         //Change the 'value' property for the Form Element
         updatedFormElement.value = event.target.value;
         //Update the 'inputIdentifier' key object with the 'updatedFormElement' object
         updatedOrderForm[inputIdentifier] = updatedFormElement;
-
         //Set the state with the finalized OrderForm
         this.setState({ orderForm: updatedOrderForm });
     }
