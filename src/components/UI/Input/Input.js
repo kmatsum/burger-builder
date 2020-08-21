@@ -4,6 +4,11 @@ import cssClasses from './Input.module.css';
 
 //Component Function =========================
 const input = (props) => {
+    const inputCSSClasses = [cssClasses.InputElement];
+    if(props.invalid && props.shouldValidate && props.touched) {
+        inputCSSClasses.push(cssClasses.Invalid);
+    }
+
     let inputElement = null;
     //Switch Statement to determine the Input HTML Element ----------
     switch (props.elementType) {
@@ -12,7 +17,7 @@ const input = (props) => {
             inputElement =
                 <input
                     {...props.elementConfig}
-                    className={cssClasses.InputElement}
+                    className={inputCSSClasses.join(' ')}
                     value={props.value}
                     onChange={props.changed}
                 />;
@@ -22,7 +27,7 @@ const input = (props) => {
             inputElement =
                 <textarea
                     {...props.elementConfig}
-                    className={cssClasses.InputElement}
+                    className={inputCSSClasses.join(' ')}
                     value={props.value}
                     onChange={props.changed}
                 />;
@@ -30,7 +35,7 @@ const input = (props) => {
         //'Dropdown' HTML Element -----
         case ("select"): {
             inputElement =
-                <select className={cssClasses.InputElement} value={props.value} onChange={props.changed}>
+                <select className={inputCSSClasses.join(' ')} value={props.value} onChange={props.changed}>
                     { //Map each 'option' from props.elementConfig to an option of the 'select' Input Element 
                         props.elementConfig.options.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -45,7 +50,7 @@ const input = (props) => {
             inputElement =
                 <input
                     {...props.elementConfig}
-                    className={cssClasses.InputElement}
+                    className={inputCSSClasses.join(' ')}
                     value={props.value}
                     onChange={props.changed}
                 />;

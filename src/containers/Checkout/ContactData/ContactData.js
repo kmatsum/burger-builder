@@ -24,7 +24,12 @@ class ContactData extends React.Component {
                     type: 'text',
                     placeholder: 'Your Name'
                 },
-                value: ''
+                value: '',
+                touched: false,
+                valid: false,
+                validation: {
+                    required: true,
+                }
             },
             street: {
                 elementType: 'input',
@@ -32,7 +37,12 @@ class ContactData extends React.Component {
                     type: 'text',
                     placeholder: 'Street'
                 },
-                value: ''
+                value: '',
+                touched: false,
+                valid: false,
+                validation: {
+                    required: true,
+                }
             },
             zipCode: {
                 elementType: 'input',
@@ -40,7 +50,14 @@ class ContactData extends React.Component {
                     type: 'text',
                     placeholder: 'Zip Code'
                 },
-                value: ''
+                value: '',
+                touched: false,
+                valid: false,
+                validation: {
+                    required: true,
+                    minLength: 5,
+                    maxLangth: 5,
+                }
             },
             country: {
                 elementType: 'input',
@@ -48,7 +65,12 @@ class ContactData extends React.Component {
                     type: 'text',
                     placeholder: 'Country'
                 },
-                value: ''
+                value: '',
+                touched: false,
+                valid: false,
+                validation: {
+                    required: true,
+                }
             },
             email: {
                 elementType: 'input',
@@ -56,19 +78,27 @@ class ContactData extends React.Component {
                     type: 'email',
                     placeholder: 'Email'
                 },
-                value: ''
+                value: '',
+                touched: false,
+                valid: false,
+                validation: {
+                    required: true,
+                }
             },
             deliveryMethod: {
                 elementType: 'select',
                 elementConfig: {
                     options: [
+                        { value: 'cheapest', displayValue: 'Cheapest' },
                         { value: 'fastest', displayValue: 'Fastest' },
-                        { value: 'cheapest', displayValue: 'Cheapest' }
                     ]
                 },
-                value: ''
+                value: 'cheapest',
+                valid: true,
+                validation: {}
             }
         }, //END OF: orderForm -----
+        formIsValid: false,
         loading: false,
     } //END OF: State ----------
 
@@ -92,11 +122,14 @@ class ContactData extends React.Component {
                         key={formElement.id}
                         elementType={formElement.config.elementType}
                         elementConfig={formElement.config.elementConfig}
+                        invalid={!formElement.config.valid}
+                        shouldValidate={formElement.config.validation}
+                        touched={formElement.config.touched}
                         value={formElement.config.value}
                         changed={(event) => { this.inputChangedHandler(event, formElement.id) }}
                     />
                 ))}
-                <Button buttonType="Success">ORDER</Button>
+                <Button buttonType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
             </form>
         );
         //If the component is still loading, display a Spinner
@@ -159,20 +192,60 @@ class ContactData extends React.Component {
      *      an Input component detects a change.
      */
     inputChangedHandler = (event, inputIdentifier) => {
+        /*  Since we have nested Objects, when we cop the 'orderForm' object from above, since it has nested objects (Objects are just pointers) 
+         *  the pointers to the *Nested Object* would be pointing to the state's Object-memory-values. This creates a *Mutable* State, which is
+         *  not how you should edit state. State must always be manipulated in an Immutable manner.
+         *  To solve this, the VALUES of the nested components are copied and made into a new Object, then the outer-object is put together when
+         *  the 'setState()' function is called. */
+
         //Create a copy of the orderForm state
         const updatedOrderForm = {
             ...this.state.orderForm
         };
-        //Since we have nested Objects in the orderForm state, the nested input
-        //element object with the 'inputIdentifier' key needed to be copied */
+        //Create the object for the nested portion of the 'orderForm' object are editing
         const updatedFormElement = {
             ...this.state.orderForm[inputIdentifier]
         };
         //Change the 'value' property for the Form Element
         updatedFormElement.value = event.target.value;
+        //Set the 'valid' property for the Form Element
+        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        //Input Element in question has been "touched"
+        updatedFormElement.touched = true;
         //Update the 'inputIdentifier' key object with the 'updatedFormElement' object
         updatedOrderForm[inputIdentifier] = updatedFormElement;
+
+        //Check entire Form Validity
+        let formIsValid = true;
+        for (let inputIdentifier in updatedOrderForm) {
+            formIsValid = (updatedOrderForm[inputIdentifier].valid && formIsValid)
+        }
+
         //Set the state with the finalized OrderForm
-        this.setState({ orderForm: updatedOrderForm });
-    }
+        this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
+    } //END OF: inputChangeHandler() ----------
+
+
+
+    /*  Validation Check on Inputs: ---------------
+     *      Returns a Boolean value dependent on the validity of the passed 'value', dependent on
+     *      the 'rules' that are passed into the function
+     */
+    checkValidity(value, rules) {
+        let isValid = true;
+        //Rules ----------
+        if (rules.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid;
+        }
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid;
+        }
+        //END OF: Rules -----
+
+        //Return validity result
+        return isValid;
+    } //END OF: checkValidity() ----------
 } export default ContactData;
