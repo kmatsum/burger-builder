@@ -1,16 +1,28 @@
+// Standard Imports
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
-//React Router Imports
+// Application Component Imports
+import App from './App';
+// React Router Imports
 import { BrowserRouter } from 'react-router-dom';
+// Redux Imports
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducer from './store/reducers/reducer';
 
+// Create Redux Store
+const store = createStore(reducer);
+
+// Render React Application Component
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

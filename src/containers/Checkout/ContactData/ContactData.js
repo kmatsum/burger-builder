@@ -1,17 +1,18 @@
-//Standard Imports
+// Standard Imports
 import React from 'react';
 import cssClasses from './ContactData.module.css';
-//Axios Instance Imports
+// Axios Instance Imports
 import axiosOrder from '../../../axios-orders';
-//Custom Component Imports
+// Redux Imports
+import { connect } from 'react-redux';
+// Custom Component Imports
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import input from '../../../components/UI/Input/Input';
 
-//Component Class =========================
+// Component Class =========================
 class ContactData extends React.Component {
-    //State ---------------
+    // State ---------------
     state = {
         /*  The 'orderForm' object holds information for <form> configuration
          *  Each Object within the 'orderForm' object has an 'elementType' and an 'elementConfig' property.
@@ -97,15 +98,15 @@ class ContactData extends React.Component {
                 valid: true,
                 validation: {}
             }
-        }, //END OF: orderForm -----
+        }, // END OF: orderForm -----
         formIsValid: false,
         loading: false,
-    } //END OF: State ----------
+    } // END OF: State ----------
 
 
 
     render() {
-        //Convert the 'orderForm' Object from the state to an array we can iterate through
+        // Convert the 'orderForm' Object from the state to an array we can iterate through
         const formElementsArray = [];
         for (let key in this.state.orderForm) {
             formElementsArray.push({
@@ -114,7 +115,7 @@ class ContactData extends React.Component {
             });
         }
 
-        //Create a form variable for Loading Spinner purposes
+        // Create a form variable for Loading Spinner purposes
         let form = (
             <form onSubmit={this.orderHandler}>
                 {formElementsArray.map((formElement) => (
@@ -132,57 +133,57 @@ class ContactData extends React.Component {
                 <Button buttonType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
             </form>
         );
-        //If the component is still loading, display a Spinner
+        // If the component is still loading, display a Spinner
         if (this.state.loading) {
             form = <Spinner />;
         }
 
-        //Return JSX ----------
+        // Return JSX ----------
         return (
             <div className={cssClasses.ContactData}>
                 <h4>Enter your Contact Data</h4>
                 {form}
             </div>
         );
-    } //END OF: render() ----------
+    } // END OF: render() ----------
 
 
 
-    //FUNCTIONS =========================
+    // FUNCTIONS =========================
 
     /*  Continue with the purchase: ---------------
      *      Process and Place Order
      */
     orderHandler = (event) => {
-        //Prevents the default action for the event
+        // Prevents the default action for the event
         event.preventDefault();
-        //Set 'Loading' state to true, enablind Loading Spinners
+        // Set 'Loading' state to true, enablind Loading Spinners
         this.setState({ loading: true });
-        //Loop through all properties in 'this.state.orderForm' to create a new 'formData' object to send through HTTP Requests
+        // Loop through all properties in 'this.state.orderForm' to create a new 'formData' object to send through HTTP Requests
         const formData = {}
         for (let formElementIdentifier in this.state.orderForm) {
             formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
         }
-        //Compile the current order to Send
+        // Compile the current order to Send
         const sendThisBurger = {
-            ingredients: this.props.ingredients,
+            ingredients: this.props.ings,
             price: this.props.totalPrice,
             orderData: formData,
         }
-        //HTTP POST Request based on the Axios-Order Instance
+        // HTTP POST Request based on the Axios-Order Instance
         axiosOrder.post('/orders.json', sendThisBurger)
             .then((response) => {
                 console.log(response);
-                //Alert the user of successful POST
+                // Alert the user of successful POST
                 alert('Burger Ordered');
-                //Disable Loading Spinner
+                // Disable Loading Spinner
                 this.setState({ loading: false });
-                //Push to the homepage
+                // Push to the homepage
                 this.props.history.push("/");
             })
             .catch((error) => {
                 console.log(error);
-                //Disable Loading Spinner
+                // Disable Loading Spinner
                 this.setState({ loading: false });
             });
     }
@@ -198,32 +199,32 @@ class ContactData extends React.Component {
          *  To solve this, the VALUES of the nested components are copied and made into a new Object, then the outer-object is put together when
          *  the 'setState()' function is called. */
 
-        //Create a copy of the orderForm state
+        // Create a copy of the orderForm state
         const updatedOrderForm = {
             ...this.state.orderForm
         };
-        //Create the object for the nested portion of the 'orderForm' object are editing
+        // Create the object for the nested portion of the 'orderForm' object are editing
         const updatedFormElement = {
             ...this.state.orderForm[inputIdentifier]
         };
-        //Change the 'value' property for the Form Element
+        // Change the 'value' property for the Form Element
         updatedFormElement.value = event.target.value;
-        //Set the 'valid' property for the Form Element
+        // Set the 'valid' property for the Form Element
         updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
-        //Input Element in question has been "touched"
+        // Input Element in question has been "touched"
         updatedFormElement.touched = true;
-        //Update the 'inputIdentifier' key object with the 'updatedFormElement' object
+        // Update the 'inputIdentifier' key object with the 'updatedFormElement' object
         updatedOrderForm[inputIdentifier] = updatedFormElement;
 
-        //Check entire Form Validity
+        // Check entire Form Validity
         let formIsValid = true;
         for (let inputIdentifier in updatedOrderForm) {
             formIsValid = (updatedOrderForm[inputIdentifier].valid && formIsValid)
         }
 
-        //Set the state with the finalized OrderForm
+        // Set the state with the finalized OrderForm
         this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
-    } //END OF: inputChangeHandler() ----------
+    } // END OF: inputChangeHandler() ----------
 
 
 
@@ -233,7 +234,7 @@ class ContactData extends React.Component {
      */
     checkValidity(value, rules) {
         let isValid = true;
-        //Rules ----------
+        // Rules ----------
         if (rules.required) {
             isValid = value.trim() !== '' && isValid;
         }
@@ -243,9 +244,19 @@ class ContactData extends React.Component {
         if (rules.maxLength) {
             isValid = value.length <= rules.maxLength && isValid;
         }
-        //END OF: Rules -----
+        // END OF: Rules -----
 
-        //Return validity result
+        // Return validity result
         return isValid;
-    } //END OF: checkValidity() ----------
-} export default ContactData;
+    } // END OF: checkValidity() ----------
+}
+
+// Redux Connections ===============
+const mapStateToProps = (reduxState) => {
+    return {
+        ings: reduxState.ingredients,
+        totalPrice: reduxState.totalPrice,
+    };
+};
+
+export default connect(mapStateToProps)(ContactData);
