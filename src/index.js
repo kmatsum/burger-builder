@@ -10,10 +10,10 @@ import { BrowserRouter } from 'react-router-dom';
 // Redux Imports
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from './store/reducers/reducer';
+import burgerBuilder from './store/reducers/burgerBuilder';
 
 // Create Redux Store
-const store = createStore(reducer);
+const store = createStore(burgerBuilder);
 
 // Render React Application Component
 ReactDOM.render(

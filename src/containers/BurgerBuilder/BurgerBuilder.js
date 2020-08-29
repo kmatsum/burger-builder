@@ -7,7 +7,7 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axiosOrder from '../../axios-orders';
 // Redux Imports
 import { connect } from 'react-redux';
-import * as actionTypes from '../../store/actions';
+import * as burgerBuilderActions from '../../store/actions/reduxActionIndex';
 // Custom Component Imports
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
@@ -27,14 +27,14 @@ class BurgerBuilder extends React.Component {
 
     componentDidMount() {
         // HTTP Requests to get the default ingredients
-        // axiosOrder.get('/ingredients.json')
-        //     .then((response) => {
-        //         this.setState({ ingredients: response.data });
-        //     })
-        //     .catch((error) => {
-        //         this.setState({ error: true });
-        //         console.log(error);
-        //     });
+        axiosOrder.get('/ingredients.json')
+            .then((response) => {
+                this.setState({ ingredients: response.data });
+            })
+            .catch((error) => {
+                this.setState({ error: true });
+                console.log(error);
+            });
     }
 
     // Render JSX ----------
@@ -162,8 +162,8 @@ const mapStateToProps = (reduxState) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onIngredientAdded: (ingredientName) => dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName: ingredientName }),
-        onIngredientRemoved: (ingredientName) => dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingredientName }),
+        onIngredientAdded: (ingredientName) => dispatch(burgerBuilderActions.addIngredient(ingredientName)),
+        onIngredientRemoved: (ingredientName) => dispatch(burgerBuilderActions.removeIngredient(ingredientName)),
     };
 };
 

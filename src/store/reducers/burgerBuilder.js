@@ -1,5 +1,5 @@
 // Action Type Imports
-import * as actionTypes from '../actions';
+import * as actionTypes from '../actions/actionTypes';
 
 // Ingredient Price Constants
 const INGREDIENT_PRICES = {
