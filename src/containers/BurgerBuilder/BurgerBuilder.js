@@ -7,7 +7,7 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axiosOrder from '../../axios-orders';
 // Redux Imports
 import { connect } from 'react-redux';
-import * as burgerBuilderActions from '../../store/actions/reduxActionIndex';
+import * as actions from '../../store/actions/reduxActionIndex';
 // Custom Component Imports
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
@@ -21,20 +21,10 @@ class BurgerBuilder extends React.Component {
     // Component State ----------
     state = {
         purchasing: false,
-        loading: false,
-        error: false,
     }
 
     componentDidMount() {
-        // HTTP Requests to get the default ingredients
-        axiosOrder.get('/ingredients.json')
-            .then((response) => {
-                this.setState({ ingredients: response.data });
-            })
-            .catch((error) => {
-                this.setState({ error: true });
-                console.log(error);
-            });
+        this.props.onFetchIngredients();
     }
 
     // Render JSX ----------
@@ -48,7 +38,7 @@ class BurgerBuilder extends React.Component {
         }
 
         // Component Variables
-        let burgerBuilder = this.state.error ? <p style={{ textAlign: 'center' }}>Ingredients cant be loaded!</p> : <Spinner />
+        let burgerBuilder = this.props.error ? <p style={{ textAlign: 'center' }}>Ingredients cant be loaded!</p> : <Spinner />
         let orderSummary = null;
 
         // Check if Ingredients are loaded from the Backend Server, load Components
@@ -73,12 +63,6 @@ class BurgerBuilder extends React.Component {
                 purchaseCanceled={this.purchaseCancelHandler}
                 purchaseContinued={this.purchaseContinuedHandler}
             />;
-
-        }
-
-        // Determine if the loading <Spinner/> needs to be displayed insted of <OrderSummary/>
-        if (this.state.loading) {
-            orderSummary = <Spinner />;
         }
 
         // Return JSX -----
@@ -134,6 +118,7 @@ class BurgerBuilder extends React.Component {
     *       Will handle the continue ordering request
     */
     purchaseContinuedHandler = () => {
+        // Create Query Parameters for our URL
         // const queryParams = [];
         // for (let i in this.state.ingredients) {
         //     queryParams.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]));
@@ -146,6 +131,8 @@ class BurgerBuilder extends React.Component {
         //     search: "?" + queryString,
         // });
 
+        this.props.onInitPurchase();
+        
         this.props.history.push("/checkout");
     }
 }
@@ -155,19 +142,20 @@ class BurgerBuilder extends React.Component {
 // Redux Connections ===============
 const mapStateToProps = (reduxState) => {
     return {
-        ings: reduxState.ingredients,
-        totalPrice: reduxState.totalPrice,
+        ings: reduxState.burgerBuilder.ingredients,
+        totalPrice: reduxState.burgerBuilder.totalPrice,
+        error: reduxState.burgerBuilder.error,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onIngredientAdded: (ingredientName) => dispatch(burgerBuilderActions.addIngredient(ingredientName)),
-        onIngredientRemoved: (ingredientName) => dispatch(burgerBuilderActions.removeIngredient(ingredientName)),
+        onIngredientAdded: (ingredientName) => dispatch(actions.addIngredient(ingredientName)),
+        onIngredientRemoved: (ingredientName) => dispatch(actions.removeIngredient(ingredientName)),
+        onFetchIngredients: () => dispatch(actions.fetchIngredients()),
+        onInitPurchase: () => dispatch(actions.purchaseInit()),
     };
 };
-
-
 
 // Export the container component with the React-Redux 'connect' Higher Order Component
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axiosOrder));

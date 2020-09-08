@@ -1,7 +1,7 @@
 // Standard Imports
 import React from 'react';
 // React Router Imports
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 // Redux Imports
 import { connect } from 'react-redux';
 // Custom Component Imports
@@ -10,23 +10,31 @@ import ContactData from './ContactData/ContactData';
 
 // Component Class =========================
 class Checkout extends React.Component {
-
     // Render Method ---------------
     render() {
+        let summary = <Redirect to="/" />
+        if (this.props.ings) {
+            // Set a <Redirect/> component to redirect us when purchasing has been successfully completed
+            const purchasedRedirect = this.props.purchased ? <Redirect to="/" /> : null;
+
+            summary = (
+                <div>
+                    {purchasedRedirect}
+                    <CheckoutSummary
+                        ingredients={this.props.ings}
+                        onCancel={this.checkoutCancelledHandler}
+                        onContinue={this.checkoutContinuedHandler}
+                    />
+                    <Route
+                        path={this.props.match.path + '/contact-data'}
+                        component={ContactData}
+                    />
+                </div>
+            );
+        }
+
         // Return JSX -----
-        return (
-            <div>
-                <CheckoutSummary
-                    ingredients={this.props.ings}
-                    onCancel={this.checkoutCancelledHandler}
-                    onContinue={this.checkoutContinuedHandler}
-                />
-                <Route
-                    path={this.props.match.path + '/contact-data'}
-                    component={ContactData}
-                />
-            </div>
-        );
+        return summary;
     }
 
     // FUNCTIONS =========================
@@ -47,9 +55,10 @@ class Checkout extends React.Component {
 }
 
 // Redux Connections ===============
-const mapStateToProps = (reduxStore) => {
+const mapStateToProps = (reduxState) => {
     return {
-        ings: reduxStore.ingredients,
+        ings: reduxState.burgerBuilder.ingredients,
+        purchased: reduxState.order.purchased,
     };
 };
 

@@ -1,5 +1,7 @@
 // Action Type Imports
 import * as actionTypes from '../actions/actionTypes';
+// Utility Imports
+import { updateObject } from '../utility';
 
 // Ingredient Price Constants
 const INGREDIENT_PRICES = {
@@ -11,27 +13,26 @@ const INGREDIENT_PRICES = {
 
 const initialState = {
     //Component Initial State ----------
-    ingredients: {
-        salad: 0,
-        bacon: 0,
-        cheese: 0,
-        meat: 0,
-    },
+    ingredients: null,
     totalPrice: 4,
+    error: false,
 }
 
 // Main Redux Reducer =========================
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case (actionTypes.ADD_INGREDIENT): {
-            return {
-                ...state,
-                ingredients: {
-                    ...state.ingredients,
-                    [action.ingredientName]: ++state.ingredients[action.ingredientName],
-                },
+            // Create an Updated Ingredient Object
+            const updatedIngredient = { [action.ingredientName]: ++state.ingredients[action.ingredientName] };
+            // Create a "new" Ingredients Object
+            const updatedIngredients = updateObject(state.ingredients, updatedIngredient);
+            // Create a new State Object
+            const updatedState = {
+                ingredients: updatedIngredients,
                 totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
             };
+
+            return updateObject(state, updatedState);
         }
 
         case (actionTypes.REMOVE_INGREDIENT): {
@@ -40,14 +41,29 @@ const reducer = (state = initialState, action) => {
                 return state;
             }
 
-            return {
-                ...state,
-                ingredients: {
-                    ...state.ingredients,
-                    [action.ingredientName]: --state.ingredients[action.ingredientName],
-                },
-                totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
+            // Create an Updated Ingredient Object
+            const updatedIng = { [action.ingredientName]: --state.ingredients[action.ingredientName] };
+            // Create a "new" Ingredients Object
+            const updatedIngs = updateObject(state.ingredients, updatedIng);
+            // Create a new State Object
+            const updatedSt = {
+                ingredients: updatedIngs,
+                totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
             };
+
+            return updateObject(state, updatedSt);
+        }
+
+        case (actionTypes.SET_INGREDIENTS): {
+            return updateObject(state, {
+                ingredients: action.ingredients,
+                totalPrice: 4,
+                error: false,
+            });
+        }
+
+        case (actionTypes.FETCH_INGREDIENTS_FAILED): {
+            return updateObject(state, { error: true, });
         }
 
         default: {

@@ -1,10 +1,13 @@
 // Standard Imports
 import React from 'react';
 import cssClasses from './ContactData.module.css';
+// Higher Order Component Imports
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 // Axios Instance Imports
 import axiosOrder from '../../../axios-orders';
 // Redux Imports
 import { connect } from 'react-redux';
+import * as actions from '../../../store/actions/reduxActionIndex';
 // Custom Component Imports
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
@@ -99,9 +102,7 @@ class ContactData extends React.Component {
                 validation: {}
             }
         }, // END OF: orderForm -----
-        formIsValid: false,
-        loading: false,
-    } // END OF: State ----------
+        formIsValid: false,} // END OF: State ----------
 
 
 
@@ -134,7 +135,7 @@ class ContactData extends React.Component {
             </form>
         );
         // If the component is still loading, display a Spinner
-        if (this.state.loading) {
+        if (this.props.loading) {
             form = <Spinner />;
         }
 
@@ -157,7 +158,7 @@ class ContactData extends React.Component {
     orderHandler = (event) => {
         // Prevents the default action for the event
         event.preventDefault();
-        // Set 'Loading' state to true, enablind Loading Spinners
+        // Set 'Loading' state to true, enabling Loading Spinners
         this.setState({ loading: true });
         // Loop through all properties in 'this.state.orderForm' to create a new 'formData' object to send through HTTP Requests
         const formData = {}
@@ -170,22 +171,8 @@ class ContactData extends React.Component {
             price: this.props.totalPrice,
             orderData: formData,
         }
-        // HTTP POST Request based on the Axios-Order Instance
-        axiosOrder.post('/orders.json', sendThisBurger)
-            .then((response) => {
-                console.log(response);
-                // Alert the user of successful POST
-                alert('Burger Ordered');
-                // Disable Loading Spinner
-                this.setState({ loading: false });
-                // Push to the homepage
-                this.props.history.push("/");
-            })
-            .catch((error) => {
-                console.log(error);
-                // Disable Loading Spinner
-                this.setState({ loading: false });
-            });
+
+        this.props.onRequestPurchaseBurger(sendThisBurger);
     }
 
     /*  Form Input Changed Handler: ---------------
@@ -254,9 +241,16 @@ class ContactData extends React.Component {
 // Redux Connections ===============
 const mapStateToProps = (reduxState) => {
     return {
-        ings: reduxState.ingredients,
-        totalPrice: reduxState.totalPrice,
+        ings: reduxState.burgerBuilder.ingredients,
+        totalPrice: reduxState.burgerBuilder.totalPrice,
+        loading: reduxState.order.loading
     };
 };
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onRequestPurchaseBurger: (orderData) => dispatch(actions.requestPurchaseBurger(orderData)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axiosOrder));
