@@ -44,6 +44,7 @@ class Auth extends React.Component {
                 }
             },
         },
+        isSignup: true,
     }
 
     // Render JSX ----------
@@ -77,8 +78,12 @@ class Auth extends React.Component {
             <div className={cssClasses.Auth}>
                 <form onSubmit={this.submitHandler}>
                     {form}
-                    <Button buttonType="Success">Login</Button>
+                    <Button buttonType="Success">SUBMIT</Button>
                 </form>
+                <Button
+                    buttonType="Danger"
+                    clicked={this.switchAuthModeHandler}
+                >SWITCH TO {this.state.isSignup ? "SIGN IN" : "SIGN UP"}</Button>
             </div>
         );
     }
@@ -95,8 +100,8 @@ class Auth extends React.Component {
         event.preventDefault();
 
         // Call the Redux Dispatch action
-        this.props.onLogin(this.state.controls.email.value, this.state.controls.password.value);
-    } // END OF: submitHandler() ----------
+        this.props.onLogin(this.state.controls.email.value, this.state.controls.password.value, this.state.isSignup);
+    }
 
     /*  Form Input Changed Handler: ---------------
      *      Handles the two-way binding of the form Inputs, updating the component state when
@@ -115,7 +120,20 @@ class Auth extends React.Component {
 
         // Set the state with the finalized OrderForm
         this.setState({ controls: updatedControls, });
-    } // END OF: inputChangeHandler() ----------
+    }
+
+    /*  Toggle Authentication Mode: ---------------
+     *      Switches the mode of the Auth Screen between Login and Sign Up
+     */
+    switchAuthModeHandler = () => {
+        this.setState((prevState) => {
+            return {
+                isSignup: !prevState.isSignup,
+            };
+        });
+    }
+
+
 
     /*  Validation Check on Inputs: ---------------
      *      Returns a Boolean value dependent on the validity of the passed 'value', dependent on
@@ -137,7 +155,7 @@ class Auth extends React.Component {
 
         // Return validity result
         return isValid;
-    } // END OF: checkValidity() ----------
+    }
 }
 
 
@@ -148,7 +166,7 @@ class Auth extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogin: (email, password) => dispatch(actions.auth(email, password)),
+        onLogin: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup)),
     };
 };
 
