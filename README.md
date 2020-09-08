@@ -1,6 +1,6 @@
 ## Burger Builder
 
-This Project is mainly a way to explore React as well as JavaScript to create a web application.
+A React Web App for me to explore React and learn the ins and outs of React and JavaScript
 
 ### Building a Burger
 
@@ -12,5 +12,12 @@ The ingredients you select will change the price of the burger<br />
 Once you order a Burger, it will be added to your cart so you can see past burger orders and what was contained in each burger.<br />
 
 ### Libraries Used
-- Redux
-- RESTful APIs
+- Redux / React-Redux
+- Redux Thunk - Async Redux Action Library
+- React Router - Website Routing Library
+- Axios - HTTP Request Management Library
+
+### Technologies Used
+- Git / GitHub (Version Control)
+- Google Firebase: This acted as a pseudo-backend for the application, storing product and order information, as well as hold User Authentication for this application.
+- REST APIs: Google Consumed the Google Firebase REST APIs to GET, PUT and POST data to the "backend servers"
