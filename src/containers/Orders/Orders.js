@@ -15,7 +15,7 @@ import Order from '../../components/Order/Order';
 class Orders extends React.Component {
 
     componentDidMount() {
-        this.props.onFetchOrders();
+        this.props.onFetchOrders(this.props.token);
     }
 
     render() {
@@ -49,12 +49,13 @@ const mapStateToProps = (reduxState) => {
     return {
         orders: reduxState.order.orders,
         loading: reduxState.order.loading,
+        token: reduxState.auth.token,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onFetchOrders: () => dispatch(actions.fetchOrders()),
+        onFetchOrders: (token) => dispatch(actions.fetchOrders(token)),
     }
 }
 

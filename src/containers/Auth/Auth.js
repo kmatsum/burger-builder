@@ -7,6 +7,7 @@ import * as actions from '../../store/actions/reduxActionIndex';
 // Custom Component Imports
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 
 
@@ -44,7 +45,7 @@ class Auth extends React.Component {
                 }
             },
         },
-        isSignup: true,
+        isSignup: false,
     }
 
     // Render JSX ----------
@@ -73,12 +74,21 @@ class Auth extends React.Component {
             />
         ));
 
+        // Display a Spinner if loading
+        if (this.props.loading) {
+            form = <Spinner />;
+        }
+
+        // Display the error message if there is one
+        const errorMessage = this.props.error ? <p>{this.props.error.message}</p> : null;
+
         // Return JSX ----------
         return (
             <div className={cssClasses.Auth}>
                 <form onSubmit={this.submitHandler}>
                     {form}
-                    <Button buttonType="Success">SUBMIT</Button>
+                    {errorMessage}
+                    <Button buttonType="Success">{this.state.isSignup ? "SIGN UP" : "SIGN IN"}</Button>
                 </form>
                 <Button
                     buttonType="Danger"
@@ -162,7 +172,12 @@ class Auth extends React.Component {
 
 // Redux Connectors ===============
 
-// const mapStateToProps ...
+const mapStateToProps = (reduxState) => {
+    return {
+        loading: reduxState.auth.loading,
+        error: reduxState.auth.error,
+    }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -171,4 +186,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // Connect Redux to this Component at export
-export default connect(null, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

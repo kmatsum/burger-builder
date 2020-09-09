@@ -32,8 +32,16 @@ const reducer = (state = initialState, action) => {
         // Save error Information when auth failed
         case (actionTypes.AUTH_FAIL): {
             return updateObject(state, {
-                error: action.error,
-                loading: false,
+                token: null,
+                userId: null,
+            });
+        }
+
+        // Logout a User
+        case (actionTypes.AUTH_LOGOUT): {
+            return updateObject(state, {
+                token: null,
+                userId: null,
             });
         }
 

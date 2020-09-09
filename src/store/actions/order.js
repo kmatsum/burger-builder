@@ -54,11 +54,11 @@ export const fetchOrderFail = (error) => {
 
 // Asynchronous Actions =========================
 
-export const requestPurchaseBurger = (orderData) => {
+export const requestPurchaseBurger = (orderData, token) => {
     return (dispatch) => {
         dispatch(purchaseBurgerStart());
         // HTTP POST Request based on the Axios-Order Instance
-        axiosOrder.post('/orders.json', orderData)
+        axiosOrder.post(`/orders.json?auth=${token}`, orderData)
             .then((response) => {
                 // Alert the user of successful POST
                 alert('Burger Ordered');
@@ -72,11 +72,11 @@ export const requestPurchaseBurger = (orderData) => {
     }
 }
 
-export const fetchOrders = () => {
+export const fetchOrders = (token) => {
     return (dispatch) => {
         dispatch(fetchOrderStart());
         // Use Axios to retrieve the Orders
-        axiosOrder.get('/orders.json')
+        axiosOrder.get(`/orders.json?auth=${token}`)
             //Process the HTTP Response
             .then((response) => {
                 //Loop through the HTTP Response Data and push them onto a new array

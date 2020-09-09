@@ -28,9 +28,16 @@ export const authFail = (error) => {
     };
 };
 
+export const logout = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    };
+}
+
 
 
 // Asyncronous Actions =========================
+
 export const auth = (email, password, isSignup) => {
     // Return a Async function for Redux-Thunk to handle
     return (dispatch) => {
@@ -56,11 +63,21 @@ export const auth = (email, password, isSignup) => {
             .then((response) => {
                 console.log(response);
                 dispatch(authSuccess(response.data));
+                dispatch(checkAuthTimeout(response.data.expiresIn));
             })
             // Catch errors and send to Redux Dispatch
             .catch((error) => {
                 console.log(error);
-                dispatch(authFail(error));
+                dispatch(authFail(error.response.data.error));
             });
     }
+}
+
+export const checkAuthTimeout = (expirationTime) => {
+    // Set an Async Timeout to force a logout when the expirtaion time has been reached
+    return (dispatch) => {
+        setTimeout(() => {
+            dispatch(logout());
+        }, expirationTime * 1000);
+    };
 }

@@ -102,7 +102,8 @@ class ContactData extends React.Component {
                 validation: {}
             }
         }, // END OF: orderForm -----
-        formIsValid: false,} // END OF: State ----------
+        formIsValid: false,
+    } // END OF: State ----------
 
 
 
@@ -172,7 +173,7 @@ class ContactData extends React.Component {
             orderData: formData,
         }
 
-        this.props.onRequestPurchaseBurger(sendThisBurger);
+        this.props.onRequestPurchaseBurger(sendThisBurger, this.props.token);
     }
 
     /*  Form Input Changed Handler: ---------------
@@ -243,13 +244,14 @@ const mapStateToProps = (reduxState) => {
     return {
         ings: reduxState.burgerBuilder.ingredients,
         totalPrice: reduxState.burgerBuilder.totalPrice,
-        loading: reduxState.order.loading
+        loading: reduxState.order.loading,
+        token: reduxState.auth.token,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onRequestPurchaseBurger: (orderData) => dispatch(actions.requestPurchaseBurger(orderData)),
+        onRequestPurchaseBurger: (orderData, token) => dispatch(actions.requestPurchaseBurger(orderData, token)),
     }
 }
 
