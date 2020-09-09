@@ -12,6 +12,7 @@ const toolbar = (props) => {
     //Return JSX ===============
     return (
         <header className={cssClasses.Toolbar}>
+            {/* DrawerToggle: Hamburger icon for mobile. Only displayed when min-width is 500 */}
             <DrawerToggle
                 clicked={props.drawerToggleClicked}
             />
@@ -19,7 +20,9 @@ const toolbar = (props) => {
                 <Logo />
             </div>
             <nav className={cssClasses.DesktopOnly}>
-                <NavigationItems />
+                <NavigationItems
+                    isAuthenticated={props.isAuthenticated}
+                />
             </nav>
         </header>
     );

@@ -12,7 +12,7 @@ const navigationItems = (props) => {
         <ul className={cssClasses.NavigationItems}>
             <NavigationItem exact link="/">Burger Builder</NavigationItem>
             <NavigationItem link="/orders">My Orders</NavigationItem>
-            <NavigationItem link="/auth">Login</NavigationItem>
+            {props.isAuthenticated ? <NavigationItem link="/logout">Logout</NavigationItem> : <NavigationItem link="/auth">Login</NavigationItem>}
         </ul>
     );
 }; export default navigationItems;

@@ -1,28 +1,34 @@
-//Standard Imports
+// Standard Imports
 import React from 'react';
 import cssClasses from './Layout.module.css';
-//Higher Order Component Import
+// Higher Order Component Import
 import Auxiliary from '../../hoc/Auxiliary';
-//Custom Component Imports
+// Redux Imports
+import { connect } from 'react-redux';
+// Custom Component Imports
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 
-//Component Class =========================
+// Component Class =========================
 class Layout extends React.Component {
-    //Instantiate State
+    // Instantiate State
     state = {
         showSideDrawer: false,
     }
-    
-    //Render Method ===============
+
+    // Render Method ===============
     render() {
         return (
             <Auxiliary>
-                <Toolbar drawerToggleClicked={this.sideDrawerToggleHandler}/>
+                <Toolbar
+                    isAuthenticated={this.props.isAuthenticated}
+                    drawerToggleClicked={this.sideDrawerToggleHandler}
+                />
                 <SideDrawer
                     open={this.state.showSideDrawer}
+                    isAuthenticated={this.props.isAuthenticated}
                     closed={this.sideDrawerClosedHandler}
-                    />
+                />
                 <main className={cssClasses.Content}>
                     {this.props.children}
                 </main>
@@ -30,7 +36,7 @@ class Layout extends React.Component {
         );
     }
 
-    //FUNCTIONS =========================
+    // FUNCTIONS =========================
 
     /*  Force-Close the Side Drawer Component: ===============
             Will force the 'showSideDrawer' state to be false, closing the Side Drawer Component        */
@@ -45,4 +51,14 @@ class Layout extends React.Component {
             return { showSideDrawer: !prevState.showSideDrawer }
         });
     }
-} export default Layout;
+}
+
+// Redux Component Connections
+const mapStateToProps = (reduxState) => {
+    return {
+        // Check to see if we are authenticated by comparing the value to null
+        isAuthenticated: reduxState.auth.token !== null,
+    };
+};
+
+export default connect(mapStateToProps)(Layout);

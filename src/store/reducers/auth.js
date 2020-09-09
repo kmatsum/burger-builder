@@ -34,6 +34,8 @@ const reducer = (state = initialState, action) => {
             return updateObject(state, {
                 token: null,
                 userId: null,
+                error: action.error,
+                loading: false,
             });
         }
 
