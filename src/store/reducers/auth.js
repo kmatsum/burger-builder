@@ -9,6 +9,7 @@ const initialState = {
     userId: null,
     error: null,
     loading: false,
+    authRedirectPath: "/",
 }
 
 // Reducer Function
@@ -44,6 +45,13 @@ const reducer = (state = initialState, action) => {
             return updateObject(state, {
                 token: null,
                 userId: null,
+            });
+        }
+
+        // Change the redirect path
+        case (actionTypes.AUTH_SET_REDIRECT_PATH): {
+            return updateObject(state, {
+                authRedirectPath: action.path,
             });
         }
 

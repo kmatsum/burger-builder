@@ -1,6 +1,8 @@
 // Standard Imports
 import React from 'react';
 import cssClasses from './Auth.module.css';
+// React Router Imports
+import { Redirect } from 'react-router-dom';
 // Redux Imports
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/reduxActionIndex';
@@ -48,6 +50,13 @@ class Auth extends React.Component {
         isSignup: false,
     }
 
+    componentDidMount() {
+        // If the user IS NOT Building a Burger and the Redirect Path is NOT "/", then we need to reset the Redirect Path State
+        if (!this.props.buildingBurger && this.props.authRedirectPath !== "/") {
+            this.props.onAuthSetRederectPath();
+        }
+    }
+
     // Render JSX ----------
     render() {
         // Convert the 'controls' Object from the state to an array we can iterate through
@@ -81,6 +90,11 @@ class Auth extends React.Component {
 
         // Display the error message if there is one
         const errorMessage = this.props.error ? <p>{this.props.error.message}</p> : null;
+
+        // If the user has been authenticated and has a Token, redirect to "/"
+        if (this.props.isAuthenticated) {
+            return <Redirect to={this.props.authRedirectPath} />;
+        }
 
         // Return JSX ----------
         return (
@@ -176,12 +190,16 @@ const mapStateToProps = (reduxState) => {
     return {
         loading: reduxState.auth.loading,
         error: reduxState.auth.error,
+        isAuthenticated: reduxState.auth.token !== null,
+        buildingBurger: reduxState.burgerBuilder.building,
+        authRedirectPath: reduxState.auth.authRedirectPath,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         onLogin: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup)),
+        onAuthSetRederectPath: () => dispatch(actions.setAuthRedirectPath("/")),
     };
 };
 

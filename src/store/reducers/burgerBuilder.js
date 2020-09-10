@@ -16,6 +16,7 @@ const initialState = {
     ingredients: null,
     totalPrice: 4,
     error: false,
+    building: false,
 }
 
 // Main Redux Reducer =========================
@@ -30,6 +31,7 @@ const reducer = (state = initialState, action) => {
             const updatedState = {
                 ingredients: updatedIngredients,
                 totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
+                building: true,
             };
 
             return updateObject(state, updatedState);
@@ -49,6 +51,7 @@ const reducer = (state = initialState, action) => {
             const updatedSt = {
                 ingredients: updatedIngs,
                 totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
+                building: true,
             };
 
             return updateObject(state, updatedSt);
@@ -59,6 +62,7 @@ const reducer = (state = initialState, action) => {
                 ingredients: action.ingredients,
                 totalPrice: 4,
                 error: false,
+                building: false,
             });
         }
 

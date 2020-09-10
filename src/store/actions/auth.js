@@ -34,6 +34,13 @@ export const logout = () => {
     };
 }
 
+export const setAuthRedirectPath = (path) => {
+    return {
+        type: actionTypes.AUTH_SET_REDIRECT_PATH, 
+        path: path,
+    };
+}
+
 
 
 // Asyncronous Actions =========================
