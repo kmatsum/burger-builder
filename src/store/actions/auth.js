@@ -13,11 +13,11 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (authData) => {
+export const authSuccess = (idToken, localId) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        idToken: authData.idToken,
-        userId: authData.localId,
+        idToken: idToken,
+        userId: localId,
     };
 };
 
@@ -29,6 +29,10 @@ export const authFail = (error) => {
 };
 
 export const logout = () => {
+    // Remove Auth information from Local Storage
+    localStorage.removeItem("expirationDate");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     return {
         type: actionTypes.AUTH_LOGOUT
     };
@@ -36,7 +40,7 @@ export const logout = () => {
 
 export const setAuthRedirectPath = (path) => {
     return {
-        type: actionTypes.AUTH_SET_REDIRECT_PATH, 
+        type: actionTypes.AUTH_SET_REDIRECT_PATH,
         path: path,
     };
 }
@@ -68,8 +72,16 @@ export const auth = (email, password, isSignup) => {
         axios.post(authUrl, authData)
             // Provide the returned data to Redux Dispatch
             .then((response) => {
-                console.log(response);
-                dispatch(authSuccess(response.data));
+                // --- Save Auth Data ---
+                // Calculate the expiration date
+                const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
+                // Save the authentication into local storage:
+                localStorage.setItem("expirationDate", expirationDate);
+                localStorage.setItem("token", response.data.idToken);
+                localStorage.setItem("userId", response.data.localId);
+
+                // --- Dispatch Redux Actions ---
+                dispatch(authSuccess(response.data.idToken, response.data.localId));
                 dispatch(checkAuthTimeout(response.data.expiresIn));
             })
             // Catch errors and send to Redux Dispatch
@@ -86,5 +98,33 @@ export const checkAuthTimeout = (expirationTime) => {
         setTimeout(() => {
             dispatch(logout());
         }, expirationTime * 1000);
+    };
+}
+
+export const authCheckState = () => {
+    return (dispatch) => {
+        // Try to grab Saved Token
+        const token = localStorage.getItem("token");
+
+        // Logout to clear data if Saved Token DNE
+        if (!token) {
+            dispatch(logout());
+        } else {
+            // Get the expiration Date and calculate the expiration period
+            const expirationDate = new Date(localStorage.getItem("expirationDate"));
+            const expiresIn = (expirationDate.getTime() - new Date().getTime()) / 1000;
+
+            // If the token has expired, Logout to clear data
+            // expiresIn <= 0
+            if (expiresIn <= 0) {
+                dispatch(logout());
+            } else {
+                // Grab User Id
+                const userId = localStorage.getItem("userId");
+                // Run Redux Actions
+                dispatch(authSuccess(token, userId));
+                dispatch(checkAuthTimeout(expiresIn));
+            }
+        }
     };
 }
