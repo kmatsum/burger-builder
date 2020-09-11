@@ -1,7 +1,7 @@
 // Import Action Types
 import * as actionTypes from '../actions/actionTypes';
 // Utility Imports
-import { updateObject } from '../utility';
+import { updateObject } from '../../shared/utility';
 
 // Initial State
 const initialState = {

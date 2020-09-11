@@ -8,6 +8,8 @@ import axiosOrder from '../../../axios-orders';
 // Redux Imports
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/reduxActionIndex';
+// Utility Imports
+import { updateObject, checkValidity } from '../../../shared/utility';
 // Custom Component Imports
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
@@ -171,6 +173,7 @@ class ContactData extends React.Component {
             ingredients: this.props.ings,
             price: this.props.totalPrice,
             orderData: formData,
+            userId: this.props.userId
         }
 
         this.props.onRequestPurchaseBurger(sendThisBurger, this.props.token);
@@ -187,20 +190,18 @@ class ContactData extends React.Component {
          *  To solve this, the VALUES of the nested components are copied and made into a new Object, then the outer-object is put together when
          *  the 'setState()' function is called. */
 
-        // Create a copy of the orderForm state
-        const updatedOrderForm = {
-            ...this.state.orderForm
-        };
-        // Create the object for the nested portion of the 'orderForm' object are editing
-        const updatedFormElement = {
-            ...this.state.orderForm[inputIdentifier]
-        };
-        // Change the 'value' property for the Form Element
-        updatedFormElement.value = event.target.value;
-        // Set the 'valid' property for the Form Element
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
-        // Input Element in question has been "touched"
-        updatedFormElement.touched = true;
+        // Create and update the object for the nested portion of the 'orderForm' object are editing
+        const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+            value: event.target.value,
+            valid: checkValidity(event.target.value, this.state.orderForm[inputIdentifier].validation),
+            touched: true,
+        });
+
+        // Create a new and Update the Order Form Object with the 'inputIdentifier' key object with the 'updatedFormElement' object
+        const updatedOrderForm = updateObject(this.state.orderForm, {
+            [inputIdentifier]: updatedFormElement,
+        });
+
         // Update the 'inputIdentifier' key object with the 'updatedFormElement' object
         updatedOrderForm[inputIdentifier] = updatedFormElement;
 
@@ -213,30 +214,6 @@ class ContactData extends React.Component {
         // Set the state with the finalized OrderForm
         this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
     } // END OF: inputChangeHandler() ----------
-
-
-
-    /*  Validation Check on Inputs: ---------------
-     *      Returns a Boolean value dependent on the validity of the passed 'value', dependent on
-     *      the 'rules' that are passed into the function
-     */
-    checkValidity(value, rules) {
-        let isValid = true;
-        // Rules ----------
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-        // END OF: Rules -----
-
-        // Return validity result
-        return isValid;
-    } // END OF: checkValidity() ----------
 }
 
 // Redux Connections ===============
@@ -246,6 +223,7 @@ const mapStateToProps = (reduxState) => {
         totalPrice: reduxState.burgerBuilder.totalPrice,
         loading: reduxState.order.loading,
         token: reduxState.auth.token,
+        userId: reduxState.auth.userId,
     };
 };
 

@@ -72,11 +72,11 @@ export const requestPurchaseBurger = (orderData, token) => {
     }
 }
 
-export const fetchOrders = (token) => {
+export const fetchOrders = (token, userId) => {
     return (dispatch) => {
         dispatch(fetchOrderStart());
         // Use Axios to retrieve the Orders
-        axiosOrder.get(`/orders.json?auth=${token}`)
+        axiosOrder.get(`/orders.json?auth=${token}&orderBy="userId"&equalTo="${userId}"`)
             //Process the HTTP Response
             .then((response) => {
                 //Loop through the HTTP Response Data and push them onto a new array

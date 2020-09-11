@@ -6,6 +6,8 @@ import { Redirect } from 'react-router-dom';
 // Redux Imports
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/reduxActionIndex';
+// Utility Imports
+import { updateObject, checkValidity } from '../../shared/utility';
 // Custom Component Imports
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
@@ -132,15 +134,14 @@ class Auth extends React.Component {
      *      an Input component detects a change.
      */
     inputChangedHandler = (event, controlName) => {
-        const updatedControls = {
-            ...this.state.controls,
-            [controlName]: {
-                ...this.state.controls[controlName],
+        // Copy and Update the controls Object
+        const updatedControls = updateObject(this.state.controls, {
+            [controlName]: updateObject(this.state.controls[controlName], {
                 touched: true,
-                valid: this.checkValidity(event.target.value, this.state.controls[controlName].validation),
+                valid: checkValidity(event.target.value, this.state.controls[controlName].validation),
                 value: event.target.value,
-            }
-        };
+            })
+        });
 
         // Set the state with the finalized OrderForm
         this.setState({ controls: updatedControls, });
@@ -155,30 +156,6 @@ class Auth extends React.Component {
                 isSignup: !prevState.isSignup,
             };
         });
-    }
-
-
-
-    /*  Validation Check on Inputs: ---------------
-     *      Returns a Boolean value dependent on the validity of the passed 'value', dependent on
-     *      the 'rules' that are passed into the function
-     */
-    checkValidity(value, rules) {
-        let isValid = true;
-        // Rules ----------
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-        // END OF: Rules -----
-
-        // Return validity result
-        return isValid;
     }
 }
 

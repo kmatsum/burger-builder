@@ -1,7 +1,7 @@
 // Action Type Imports
 import * as actionTypes from '../actions/actionTypes';
 // Utility Imports
-import { updateObject } from '../utility';
+import { updateObject } from '../../shared/utility';
 
 // Ingredient Price Constants
 const INGREDIENT_PRICES = {
