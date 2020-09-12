@@ -5,7 +5,7 @@ import cssClasses from './Input.module.css';
 //Component Function =========================
 const input = (props) => {
     const inputCSSClasses = [cssClasses.InputElement];
-    if(props.invalid && props.shouldValidate && props.touched) {
+    if (props.invalid && props.shouldValidate && props.touched) {
         inputCSSClasses.push(cssClasses.Invalid);
     }
 
@@ -13,52 +13,52 @@ const input = (props) => {
     //Switch Statement to determine the Input HTML Element ----------
     switch (props.elementType) {
         //One-Line Input HTML Element -----
-        case ("input"): {
+        case ("input"): (
             inputElement =
-                <input
-                    {...props.elementConfig}
-                    className={inputCSSClasses.join(' ')}
-                    value={props.value}
-                    onChange={props.changed}
-                />;
-        } break;
+            <input
+                {...props.elementConfig}
+                className={inputCSSClasses.join(' ')}
+                value={props.value}
+                onChange={props.changed}
+            />
+        ); break;
         //Text-Area HTML Element -----
-        case ("textarea"): {
+        case ("textarea"): (
             inputElement =
-                <textarea
-                    {...props.elementConfig}
-                    className={inputCSSClasses.join(' ')}
-                    value={props.value}
-                    onChange={props.changed}
-                />;
-        } break;
+            <textarea
+                {...props.elementConfig}
+                className={inputCSSClasses.join(' ')}
+                value={props.value}
+                onChange={props.changed}
+            />
+        ); break;
         //'Dropdown' HTML Element -----
-        case ("select"): {
+        case ("select"): (
             inputElement =
-                <select className={inputCSSClasses.join(' ')} value={props.value} onChange={props.changed}>
-                    { //Map each 'option' from props.elementConfig to an option of the 'select' Input Element 
-                        props.elementConfig.options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.displayValue}
-                            </option>
-                        ))
-                    }
-                </select>;
-        } break;
+            <select className={inputCSSClasses.join(' ')} value={props.value} onChange={props.changed}>
+                { //Map each 'option' from props.elementConfig to an option of the 'select' Input Element 
+                    props.elementConfig.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.displayValue}
+                        </option>
+                    ))
+                }
+            </select>
+        ); break;
         //Default Input HTML Element -----
-        default: {
+        default: (
             inputElement =
-                <input
-                    {...props.elementConfig}
-                    className={inputCSSClasses.join(' ')}
-                    value={props.value}
-                    onChange={props.changed}
-                />;
-        } break;
+            <input
+                {...props.elementConfig}
+                className={inputCSSClasses.join(' ')}
+                value={props.value}
+                onChange={props.changed}
+            />
+        );
     } //END OF: Switch() -----
 
 
-    
+
     //Return JSX ---------------
     return (
         <div className={cssClasses.Input}>

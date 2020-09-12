@@ -86,7 +86,6 @@ export const auth = (email, password, isSignup) => {
             })
             // Catch errors and send to Redux Dispatch
             .catch((error) => {
-                console.log(error);
                 dispatch(authFail(error.response.data.error));
             });
     }
