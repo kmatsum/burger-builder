@@ -16,7 +16,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
 // Component Class =========================
-class BurgerBuilder extends React.Component {
+export class BurgerBuilder extends React.Component {
 
     // Component State ----------
     state = {
